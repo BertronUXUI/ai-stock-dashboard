@@ -1,6 +1,6 @@
 import streamlit as st
 import yfinance as yf
-import openai migrate
+import openai
 import datetime
 import os
 
