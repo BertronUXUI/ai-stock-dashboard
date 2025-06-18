@@ -1,436 +1,62 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": 5,
-   "id": "3022b556-93b3-45bf-8a70-9fab2fa29630",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Requirement already satisfied: streamlit in /Users/bertron/anaconda3/lib/python3.11/site-packages (1.46.0)\n",
-      "Requirement already satisfied: yfinance in /Users/bertron/anaconda3/lib/python3.11/site-packages (0.2.28)\n",
-      "Requirement already satisfied: openai in /Users/bertron/anaconda3/lib/python3.11/site-packages (1.88.0)\n",
-      "Requirement already satisfied: altair<6,>=4.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (5.5.0)\n",
-      "Requirement already satisfied: blinker<2,>=1.5.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (1.9.0)\n",
-      "Requirement already satisfied: cachetools<7,>=4.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (6.1.0)\n",
-      "Requirement already satisfied: click<9,>=7.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (8.0.4)\n",
-      "Requirement already satisfied: numpy<3,>=1.23 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (2.0.2)\n",
-      "Requirement already satisfied: packaging<26,>=20 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (23.0)\n",
-      "Requirement already satisfied: pandas<3,>=1.4.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (1.5.3)\n",
-      "Requirement already satisfied: pillow<12,>=7.1.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (11.0.0)\n",
-      "Requirement already satisfied: protobuf<7,>=3.20 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (5.29.3)\n",
-      "Requirement already satisfied: pyarrow>=7.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (11.0.0)\n",
-      "Requirement already satisfied: requests<3,>=2.27 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (2.32.3)\n",
-      "Requirement already satisfied: tenacity<10,>=8.1.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (8.2.2)\n",
-      "Requirement already satisfied: toml<2,>=0.10.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (0.10.2)\n",
-      "Requirement already satisfied: typing-extensions<5,>=4.4.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (4.14.0)\n",
-      "Requirement already satisfied: gitpython!=3.1.19,<4,>=3.0.7 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (3.1.44)\n",
-      "Requirement already satisfied: pydeck<1,>=0.8.0b4 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (0.9.1)\n",
-      "Requirement already satisfied: tornado!=6.5.0,<7,>=6.0.3 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from streamlit) (6.2)\n",
-      "Requirement already satisfied: multitasking>=0.0.7 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (0.0.11)\n",
-      "Requirement already satisfied: lxml>=4.9.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (4.9.2)\n",
-      "Requirement already satisfied: appdirs>=1.4.4 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (1.4.4)\n",
-      "Requirement already satisfied: pytz>=2022.5 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (2022.7)\n",
-      "Requirement already satisfied: frozendict>=2.3.4 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (2.4.2)\n",
-      "Requirement already satisfied: beautifulsoup4>=4.11.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (4.12.2)\n",
-      "Requirement already satisfied: html5lib>=1.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (1.1)\n",
-      "Requirement already satisfied: anyio<5,>=3.5.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from openai) (3.5.0)\n",
-      "Requirement already satisfied: distro<2,>=1.7.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from openai) (1.9.0)\n",
-      "Requirement already satisfied: httpx<1,>=0.23.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from openai) (0.27.0)\n",
-      "Requirement already satisfied: jiter<1,>=0.4.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from openai) (0.10.0)\n",
-      "Requirement already satisfied: pydantic<3,>=1.9.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from openai) (2.8.2)\n",
-      "Requirement already satisfied: sniffio in /Users/bertron/anaconda3/lib/python3.11/site-packages (from openai) (1.2.0)\n",
-      "Requirement already satisfied: tqdm>4 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from openai) (4.65.0)\n",
-      "Requirement already satisfied: jinja2 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from altair<6,>=4.0->streamlit) (3.1.2)\n",
-      "Requirement already satisfied: jsonschema>=3.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from altair<6,>=4.0->streamlit) (4.23.0)\n",
-      "Requirement already satisfied: narwhals>=1.14.2 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from altair<6,>=4.0->streamlit) (1.43.0)\n",
-      "Requirement already satisfied: idna>=2.8 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from anyio<5,>=3.5.0->openai) (3.4)\n",
-      "Requirement already satisfied: soupsieve>1.2 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from beautifulsoup4>=4.11.1->yfinance) (2.4)\n",
-      "Requirement already satisfied: gitdb<5,>=4.0.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from gitpython!=3.1.19,<4,>=3.0.7->streamlit) (4.0.12)\n",
-      "Requirement already satisfied: six>=1.9 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from html5lib>=1.1->yfinance) (1.16.0)\n",
-      "Requirement already satisfied: webencodings in /Users/bertron/anaconda3/lib/python3.11/site-packages (from html5lib>=1.1->yfinance) (0.5.1)\n",
-      "Requirement already satisfied: certifi in /Users/bertron/anaconda3/lib/python3.11/site-packages (from httpx<1,>=0.23.0->openai) (2025.4.26)\n",
-      "Requirement already satisfied: httpcore==1.* in /Users/bertron/anaconda3/lib/python3.11/site-packages (from httpx<1,>=0.23.0->openai) (1.0.2)\n",
-      "Requirement already satisfied: h11<0.15,>=0.13 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from httpcore==1.*->httpx<1,>=0.23.0->openai) (0.14.0)\n",
-      "Requirement already satisfied: python-dateutil>=2.8.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from pandas<3,>=1.4.0->streamlit) (2.8.2)\n",
-      "Requirement already satisfied: annotated-types>=0.4.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai) (0.6.0)\n",
-      "Requirement already satisfied: pydantic-core==2.20.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from pydantic<3,>=1.9.0->openai) (2.20.1)\n",
-      "Requirement already satisfied: charset-normalizer<4,>=2 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from requests<3,>=2.27->streamlit) (2.0.4)\n",
-      "Requirement already satisfied: urllib3<3,>=1.21.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from requests<3,>=2.27->streamlit) (1.26.16)\n",
-      "Requirement already satisfied: smmap<6,>=3.0.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from gitdb<5,>=4.0.1->gitpython!=3.1.19,<4,>=3.0.7->streamlit) (5.0.2)\n",
-      "Requirement already satisfied: MarkupSafe>=2.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from jinja2->altair<6,>=4.0->streamlit) (2.1.1)\n",
-      "Requirement already satisfied: attrs>=22.2.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (24.3.0)\n",
-      "Requirement already satisfied: jsonschema-specifications>=2023.03.6 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (2023.7.1)\n",
-      "Requirement already satisfied: referencing>=0.28.4 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.30.2)\n",
-      "Requirement already satisfied: rpds-py>=0.7.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from jsonschema>=3.0->altair<6,>=4.0->streamlit) (0.22.3)\n",
-      "Note: you may need to restart the kernel to use updated packages.\n"
-     ]
-    }
-   ],
-   "source": [
-    "pip install streamlit yfinance openai"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 10,
-   "id": "3077b0cf-09c0-4c2e-adce-cd8caa435d58",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "2025-06-18 17:30:48.525 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.527 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.527 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.528 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.529 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.529 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.530 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.530 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.531 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.531 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.531 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.532 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.532 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.532 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.532 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.533 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.533 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.533 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.533 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.534 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.534 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.534 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "Failed to get ticker 'AAPL' reason: Expecting value: line 1 column 1 (char 0)\n",
-      "AAPL: No timezone found, symbol may be delisted\n",
-      "2025-06-18 17:30:48.589 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.589 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:30:48.590 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n"
-     ]
-    }
-   ],
-   "source": [
-    "import streamlit as st\n",
-    "import yfinance as yf\n",
-    "import openai\n",
-    "import datetime\n",
-    "\n",
-    "# Set your OpenAI API key securely\n",
-    "openai.api_key = \"your_openai_api_key\"  # <-- Replace with your key or use st.secrets\n",
-    "\n",
-    "# App title\n",
-    "st.title(\"📊 AI-Powered Stock Dashboard\")\n",
-    "\n",
-    "# User input\n",
-    "ticker = st.text_input(\"Enter a stock ticker (e.g., AAPL):\", \"AAPL\")\n",
-    "start_date = st.date_input(\"Start date\", datetime.date(2023, 1, 1))\n",
-    "end_date = st.date_input(\"End date\", datetime.date.today())\n",
-    "\n",
-    "# Fetch stock data\n",
-    "try:\n",
-    "    stock = yf.Ticker(ticker)\n",
-    "    hist = stock.history(start=start_date, end=end_date)\n",
-    "\n",
-    "    if hist.empty:\n",
-    "        st.warning(\"No historical data found for this ticker and date range.\")\n",
-    "    else:\n",
-    "        # Show stock chart\n",
-    "        st.subheader(\"📈 Stock Price Chart\")\n",
-    "        st.line_chart(hist[\"Close\"])\n",
-    "\n",
-    "        # Show key metrics\n",
-    "        st.subheader(\"📌 Key Financial Metrics\")\n",
-    "        info = stock.info\n",
-    "        st.write({\n",
-    "            \"Current Price\": info.get(\"currentPrice\", \"N/A\"),\n",
-    "            \"Market Cap\": info.get(\"marketCap\", \"N/A\"),\n",
-    "            \"P/E Ratio\": info.get(\"trailingPE\", \"N/A\"),\n",
-    "            \"Revenue (TTM)\": info.get(\"totalRevenue\", \"N/A\"),\n",
-    "            \"Revenue Growth (YoY)\": info.get(\"revenueGrowth\", \"N/A\"),\n",
-    "            \"EPS (TTM)\": info.get(\"trailingEps\", \"N/A\")\n",
-    "        })\n",
-    "\n",
-    "        # AI Synopsis\n",
-    "        st.subheader(\"🧠 AI-Generated Investment Thesis\")\n",
-    "\n",
-    "        summary_prompt = f\"\"\"\n",
-    "        Act as a financial analyst. Based on the following data for {ticker}, write a short investment synopsis (around 100 words):\n",
-    "        - Current Price: {info.get(\"currentPrice\", \"N/A\")}\n",
-    "        - Market Cap: {info.get(\"marketCap\", \"N/A\")}\n",
-    "        - P/E Ratio: {info.get(\"trailingPE\", \"N/A\")}\n",
-    "        - Revenue: {info.get(\"totalRevenue\", \"N/A\")}\n",
-    "        - Revenue Growth: {info.get(\"revenueGrowth\", \"N/A\")}\n",
-    "        - EPS: {info.get(\"trailingEps\", \"N/A\")}\n",
-    "        \"\"\"\n",
-    "\n",
-    "        if st.button(\"Generate Synopsis\"):\n",
-    "            try:\n",
-    "                response = openai.ChatCompletion.create(\n",
-    "                    model=\"gpt-4\",\n",
-    "                    messages=[\n",
-    "                        {\"role\": \"system\", \"content\": \"You are a financial analyst.\"},\n",
-    "                        {\"role\": \"user\", \"content\": summary_prompt}\n",
-    "                    ]\n",
-    "                )\n",
-    "                synopsis = response[\"choices\"][0][\"message\"][\"content\"]\n",
-    "                st.success(synopsis)\n",
-    "            except Exception as e:\n",
-    "                st.error(f\"Error generating synopsis: {e}\")\n",
-    "\n",
-    "except Exception as e:\n",
-    "    st.error(f\"Failed to fetch stock data: {e}\")"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 12,
-   "id": "0a23c1ac-cb13-45a2-a4c0-31d0747ff309",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Requirement already satisfied: yfinance in /Users/bertron/anaconda3/lib/python3.11/site-packages (0.2.28)\n",
-      "Collecting yfinance\n",
-      "  Downloading yfinance-0.2.63-py2.py3-none-any.whl (118 kB)\n",
-      "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m118.4/118.4 kB\u001b[0m \u001b[31m3.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
-      "\u001b[?25hRequirement already satisfied: pandas>=1.3.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (1.5.3)\n",
-      "Requirement already satisfied: numpy>=1.16.5 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (2.0.2)\n",
-      "Requirement already satisfied: requests>=2.31 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (2.32.3)\n",
-      "Requirement already satisfied: multitasking>=0.0.7 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (0.0.11)\n",
-      "Requirement already satisfied: platformdirs>=2.0.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (3.10.0)\n",
-      "Requirement already satisfied: pytz>=2022.5 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (2022.7)\n",
-      "Requirement already satisfied: frozendict>=2.3.4 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (2.4.2)\n",
-      "Collecting peewee>=3.16.2 (from yfinance)\n",
-      "  Downloading peewee-3.18.1.tar.gz (3.0 MB)\n",
-      "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m3.0/3.0 MB\u001b[0m \u001b[31m14.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0ma \u001b[36m0:00:01\u001b[0m\n",
-      "  Installing build dependencies ... \u001b[?done\n",
-      "\u001b[?25h  Getting requirements to build wheel ... \u001b[?25ldone\n",
-      "\u001b[?25h  Preparing metadata (pyproject.toml) ... \u001b[?25ldone\n",
-      "\u001b[?25hRequirement already satisfied: beautifulsoup4>=4.11.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (4.12.2)\n",
-      "Collecting curl_cffi>=0.7 (from yfinance)\n",
-      "  Downloading curl_cffi-0.11.3-cp39-abi3-macosx_11_0_arm64.whl (3.0 MB)\n",
-      "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m3.0/3.0 MB\u001b[0m \u001b[31m10.9 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0ma \u001b[36m0:00:01\u001b[0m\n",
-      "\u001b[?25hRequirement already satisfied: protobuf>=3.19.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from yfinance) (5.29.3)\n",
-      "Collecting websockets>=13.0 (from yfinance)\n",
-      "  Downloading websockets-15.0.1-cp311-cp311-macosx_11_0_arm64.whl (173 kB)\n",
-      "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m173.3/173.3 kB\u001b[0m \u001b[31m15.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
-      "\u001b[?25hRequirement already satisfied: soupsieve>1.2 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from beautifulsoup4>=4.11.1->yfinance) (2.4)\n",
-      "Requirement already satisfied: cffi>=1.12.0 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from curl_cffi>=0.7->yfinance) (1.15.1)\n",
-      "Requirement already satisfied: certifi>=2024.2.2 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from curl_cffi>=0.7->yfinance) (2025.4.26)\n",
-      "Requirement already satisfied: python-dateutil>=2.8.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from pandas>=1.3.0->yfinance) (2.8.2)\n",
-      "Requirement already satisfied: charset-normalizer<4,>=2 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from requests>=2.31->yfinance) (2.0.4)\n",
-      "Requirement already satisfied: idna<4,>=2.5 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from requests>=2.31->yfinance) (3.4)\n",
-      "Requirement already satisfied: urllib3<3,>=1.21.1 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from requests>=2.31->yfinance) (1.26.16)\n",
-      "Requirement already satisfied: pycparser in /Users/bertron/anaconda3/lib/python3.11/site-packages (from cffi>=1.12.0->curl_cffi>=0.7->yfinance) (2.21)\n",
-      "Requirement already satisfied: six>=1.5 in /Users/bertron/anaconda3/lib/python3.11/site-packages (from python-dateutil>=2.8.1->pandas>=1.3.0->yfinance) (1.16.0)\n",
-      "Building wheels for collected packages: peewee\n",
-      "  Building wheel for peewee (pyproject.toml) ... \u001b[?2done\n",
-      "\u001b[?25h  Created wheel for peewee: filename=peewee-3.18.1-cp311-cp311-macosx_11_0_arm64.whl size=271319 sha256=b250189dcd5dc12ec67f165ed7cd7b0b3da3208679a8a10b1396d69531df0612\n",
-      "  Stored in directory: /Users/bertron/Library/Caches/pip/wheels/25/cb/79/a133a0d1d75f318a96614ed7fb97bdf2f35a7b6c4d4e426e3f\n",
-      "Successfully built peewee\n",
-      "Installing collected packages: peewee, websockets, curl_cffi, yfinance\n",
-      "  Attempting uninstall: yfinance\n",
-      "    Found existing installation: yfinance 0.2.28\n",
-      "    Uninstalling yfinance-0.2.28:\n",
-      "      Successfully uninstalled yfinance-0.2.28\n",
-      "Successfully installed curl_cffi-0.11.3 peewee-3.18.1 websockets-15.0.1 yfinance-0.2.63\n",
-      "Note: you may need to restart the kernel to use updated packages.\n"
-     ]
-    }
-   ],
-   "source": [
-    "pip install --upgrade yfinance"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 2,
-   "id": "d6fc9a1a-d533-445d-9c06-d0ca86b3d3e9",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "{'address1': 'One Apple Park Way', 'city': 'Cupertino', 'state': 'CA', 'zip': '95014', 'country': 'United States', 'phone': '(408) 996-1010', 'website': 'https://www.apple.com', 'industry': 'Consumer Electronics', 'industryKey': 'consumer-electronics', 'industryDisp': 'Consumer Electronics', 'sector': 'Technology', 'sectorKey': 'technology', 'sectorDisp': 'Technology', 'longBusinessSummary': 'Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide. The company offers iPhone, a line of smartphones; Mac, a line of personal computers; iPad, a line of multi-purpose tablets; and wearables, home, and accessories comprising AirPods, Apple TV, Apple Watch, Beats products, and HomePod. It also provides AppleCare support and cloud services; and operates various platforms, including the App Store that allow customers to discover and download applications and digital content, such as books, music, video, games, and podcasts, as well as advertising services include third-party licensing arrangements and its own advertising platforms. In addition, the company offers various subscription-based services, such as Apple Arcade, a game subscription service; Apple Fitness+, a personalized fitness service; Apple Music, which offers users a curated listening experience with on-demand radio stations; Apple News+, a subscription news and magazine service; Apple TV+, which offers exclusive original content; Apple Card, a co-branded credit card; and Apple Pay, a cashless payment service, as well as licenses its intellectual property. The company serves consumers, and small and mid-sized businesses; and the education, enterprise, and government markets. It distributes third-party applications for its products through the App Store. The company also sells its products through its retail and online stores, and direct sales force; and third-party cellular network carriers, wholesalers, retailers, and resellers. Apple Inc. was founded in 1976 and is headquartered in Cupertino, California.', 'fullTimeEmployees': 164000, 'companyOfficers': [{'maxAge': 1, 'name': 'Mr. Timothy D. Cook', 'age': 63, 'title': 'CEO & Director', 'yearBorn': 1961, 'fiscalYear': 2024, 'totalPay': 16520856, 'exercisedValue': 0, 'unexercisedValue': 0}, {'maxAge': 1, 'name': 'Mr. Jeffrey E. Williams', 'age': 60, 'title': 'Chief Operating Officer', 'yearBorn': 1964, 'fiscalYear': 2024, 'totalPay': 5020737, 'exercisedValue': 0, 'unexercisedValue': 0}, {'maxAge': 1, 'name': 'Ms. Katherine L. Adams', 'age': 60, 'title': 'Senior VP, General Counsel & Secretary', 'yearBorn': 1964, 'fiscalYear': 2024, 'totalPay': 5022182, 'exercisedValue': 0, 'unexercisedValue': 0}, {'maxAge': 1, 'name': \"Ms. Deirdre  O'Brien\", 'age': 57, 'title': 'Chief People Officer & Senior VP of Retail', 'yearBorn': 1967, 'fiscalYear': 2024, 'totalPay': 5022182, 'exercisedValue': 0, 'unexercisedValue': 0}, {'maxAge': 1, 'name': 'Mr. Kevan  Parekh', 'age': 52, 'title': 'Senior VP & CFO', 'yearBorn': 1972, 'fiscalYear': 2024, 'exercisedValue': 0, 'unexercisedValue': 0}, {'maxAge': 1, 'name': 'Mr. Chris  Kondo', 'title': 'Senior Director of Corporate Accounting', 'fiscalYear': 2024, 'exercisedValue': 0, 'unexercisedValue': 0}, {'maxAge': 1, 'name': 'Suhasini  Chandramouli', 'title': 'Director of Investor Relations', 'fiscalYear': 2024, 'exercisedValue': 0, 'unexercisedValue': 0}, {'maxAge': 1, 'name': 'Ms. Kristin Huguet Quayle', 'title': 'Vice President of Worldwide Communications', 'fiscalYear': 2024, 'exercisedValue': 0, 'unexercisedValue': 0}, {'maxAge': 1, 'name': 'Mr. Greg  Joswiak', 'title': 'Senior Vice President of Worldwide Marketing', 'fiscalYear': 2024, 'exercisedValue': 0, 'unexercisedValue': 0}, {'maxAge': 1, 'name': 'Mr. Adrian  Perica', 'age': 50, 'title': 'Vice President of Corporate Development', 'yearBorn': 1974, 'fiscalYear': 2024, 'exercisedValue': 0, 'unexercisedValue': 0}], 'auditRisk': 7, 'boardRisk': 1, 'compensationRisk': 3, 'shareHolderRightsRisk': 1, 'overallRisk': 1, 'governanceEpochDate': 1748736000, 'compensationAsOfEpochDate': 1735603200, 'irWebsite': 'http://investor.apple.com/', 'executiveTeam': [], 'maxAge': 86400, 'priceHint': 2, 'previousClose': 198.42, 'open': 197.2, 'dayLow': 195.21, 'dayHigh': 198.3889, 'regularMarketPreviousClose': 198.42, 'regularMarketOpen': 197.2, 'regularMarketDayLow': 195.21, 'regularMarketDayHigh': 198.3889, 'dividendRate': 1.04, 'dividendYield': 0.53, 'exDividendDate': 1747008000, 'payoutRatio': 0.1558, 'fiveYearAvgDividendYield': 0.56, 'beta': 1.211, 'trailingPE': 30.47352, 'forwardPE': 23.542719, 'volume': 38772936, 'regularMarketVolume': 38772936, 'averageVolume': 61076852, 'averageVolume10days': 51097240, 'averageDailyVolume10Day': 51097240, 'bid': 187.15, 'ask': 200.0, 'bidSize': 1, 'askSize': 10, 'marketCap': 2922039738368, 'fiftyTwoWeekLow': 169.21, 'fiftyTwoWeekHigh': 260.1, 'priceToSalesTrailing12Months': 7.298421, 'fiftyDayAverage': 201.481, 'twoHundredDayAverage': 224.15096, 'trailingAnnualDividendRate': 1.0, 'trailingAnnualDividendYield': 0.0050398144, 'currency': 'USD', 'tradeable': False, 'enterpriseValue': 2971733065728, 'profitMargins': 0.24301, 'floatShares': 14911480604, 'sharesOutstanding': 14935799808, 'sharesShort': 94828443, 'sharesShortPriorMonth': 108598767, 'sharesShortPreviousMonthDate': 1745971200, 'dateShortInterest': 1748563200, 'sharesPercentSharesOut': 0.0063, 'heldPercentInsiders': 0.02085, 'heldPercentInstitutions': 0.62891996, 'shortRatio': 1.67, 'shortPercentOfFloat': 0.0064, 'impliedSharesOutstanding': 14935799808, 'bookValue': 4.471, 'priceToBook': 43.757545, 'lastFiscalYearEnd': 1727481600, 'nextFiscalYearEnd': 1759017600, 'mostRecentQuarter': 1743206400, 'earningsQuarterlyGrowth': 0.048, 'netIncomeToCommon': 97294000128, 'trailingEps': 6.42, 'forwardEps': 8.31, 'lastSplitFactor': '4:1', 'lastSplitDate': 1598832000, 'enterpriseToRevenue': 7.423, 'enterpriseToEbitda': 21.4, '52WeekChange': -0.0669592, 'SandP52WeekChange': 0.093099594, 'lastDividendValue': 0.26, 'lastDividendDate': 1747008000, 'quoteType': 'EQUITY', 'currentPrice': 195.64, 'targetHighPrice': 300.0, 'targetLowPrice': 170.62, 'targetMeanPrice': 228.85326, 'targetMedianPrice': 232.5, 'recommendationMean': 2.1087, 'recommendationKey': 'buy', 'numberOfAnalystOpinions': 40, 'totalCash': 48497999872, 'totalCashPerShare': 3.247, 'ebitda': 138865999872, 'totalDebt': 98186002432, 'quickRatio': 0.68, 'currentRatio': 0.821, 'totalRevenue': 400366010368, 'debtToEquity': 146.994, 'revenuePerShare': 26.455, 'returnOnAssets': 0.23809999, 'returnOnEquity': 1.38015, 'grossProfits': 186699005952, 'freeCashflow': 97251500032, 'operatingCashflow': 109555998720, 'earningsGrowth': 0.078, 'revenueGrowth': 0.051, 'grossMargins': 0.46632, 'ebitdaMargins': 0.34685, 'operatingMargins': 0.31028998, 'financialCurrency': 'USD', 'symbol': 'AAPL', 'language': 'en-US', 'region': 'US', 'typeDisp': 'Equity', 'quoteSourceName': 'Nasdaq Real Time Price', 'triggerable': True, 'customPriceAlertConfidence': 'HIGH', 'hasPrePostMarketData': True, 'firstTradeDateMilliseconds': 345479400000, 'preMarketChange': 0.8600006, 'preMarketChangePercent': 0.4395832, 'preMarketPrice': 196.5, 'regularMarketChange': -2.78, 'regularMarketDayRange': '195.21 - 198.3889', 'fullExchangeName': 'NasdaqGS', 'averageDailyVolume3Month': 61076852, 'fiftyTwoWeekLowChange': 26.429993, 'fiftyTwoWeekLowChangePercent': 0.15619639, 'fiftyTwoWeekRange': '169.21 - 260.1', 'fiftyTwoWeekHighChange': -64.46001, 'fiftyTwoWeekHighChangePercent': -0.24782778, 'fiftyTwoWeekChangePercent': -6.69592, 'dividendDate': 1747267200, 'earningsTimestamp': 1746131400, 'earningsTimestampStart': 1753873140, 'earningsTimestampEnd': 1754308800, 'earningsCallTimestampStart': 1746133200, 'earningsCallTimestampEnd': 1746133200, 'isEarningsDateEstimate': True, 'epsTrailingTwelveMonths': 6.42, 'epsForward': 8.31, 'epsCurrentYear': 7.18956, 'priceEpsCurrentYear': 27.21168, 'fiftyDayAverageChange': -5.8410034, 'fiftyDayAverageChangePercent': -0.028990343, 'twoHundredDayAverageChange': -28.510956, 'twoHundredDayAverageChangePercent': -0.12719533, 'sourceInterval': 15, 'exchangeDataDelayedBy': 0, 'averageAnalystRating': '2.1 - Buy', 'exchange': 'NMS', 'messageBoardId': 'finmb_24937', 'exchangeTimezoneName': 'America/New_York', 'exchangeTimezoneShortName': 'EDT', 'gmtOffSetMilliseconds': -14400000, 'market': 'us_market', 'esgPopulated': False, 'regularMarketChangePercent': -1.40107, 'regularMarketPrice': 195.64, 'corporateActions': [], 'preMarketTime': 1750239603, 'regularMarketTime': 1750190402, 'longName': 'Apple Inc.', 'cryptoTradeable': False, 'shortName': 'Apple Inc.', 'marketState': 'PRE', 'displayName': 'Apple', 'trailingPegRatio': 1.7763}\n"
-     ]
-    }
-   ],
-   "source": [
-    "import yfinance as yf\n",
-    "\n",
-    "stock = yf.Ticker(\"AAPL\")\n",
-    "info = stock.info\n",
-    "print(info)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 8,
-   "id": "cc511d71-a856-4e37-92ce-88935d1adc37",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "2025-06-18 17:41:05.894 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.935 \n",
-      "  \u001b[33m\u001b[1mWarning:\u001b[0m to view this Streamlit app on a browser, run it with the following\n",
-      "  command:\n",
-      "\n",
-      "    streamlit run /Users/bertron/anaconda3/lib/python3.11/site-packages/ipykernel_launcher.py [ARGUMENTS]\n",
-      "2025-06-18 17:41:05.935 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.935 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.936 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.936 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.936 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.936 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.937 Session state does not function when running a script without `streamlit run`\n",
-      "2025-06-18 17:41:05.937 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.937 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.937 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.937 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.937 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.938 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.938 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.938 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.938 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.939 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.939 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.939 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.939 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.940 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:05.940 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.160 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.160 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.161 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.306 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.307 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.307 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.307 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.307 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.307 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.365 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.366 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.366 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.366 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.366 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.367 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.367 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.367 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.367 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.368 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.368 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
-      "2025-06-18 17:41:06.368 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n"
-     ]
-    }
-   ],
-   "source": [
-    "import openai\n",
-    "import streamlit as st\n",
-    "import datetime\n",
-    "# Set your OpenAI API key securely\n",
-    "openai.api_key = \"your_openai_api_key\"  # <-- Replace with your key or use st.secrets\n",
-    "\n",
-    "# App title\n",
-    "st.title(\"📊 AI-Powered Stock Dashboard\")\n",
-    "\n",
-    "# User input\n",
-    "ticker = st.text_input(\"Enter a stock ticker (e.g., AAPL):\", \"AAPL\")\n",
-    "start_date = st.date_input(\"Start date\", datetime.date(2023, 1, 1))\n",
-    "end_date = st.date_input(\"End date\", datetime.date.today())\n",
-    "\n",
-    "# Fetch stock data\n",
-    "try:\n",
-    "    stock = yf.Ticker(ticker)\n",
-    "    hist = stock.history(start=start_date, end=end_date)\n",
-    "\n",
-    "    if hist.empty:\n",
-    "        st.warning(\"No historical data found for this ticker and date range.\")\n",
-    "    else:\n",
-    "        # Show stock chart\n",
-    "        st.subheader(\"📈 Stock Price Chart\")\n",
-    "        st.line_chart(hist[\"Close\"])\n",
-    "\n",
-    "        # Show key metrics\n",
-    "        st.subheader(\"📌 Key Financial Metrics\")\n",
-    "        info = stock.info\n",
-    "        st.write({\n",
-    "            \"Current Price\": info.get(\"currentPrice\", \"N/A\"),\n",
-    "            \"Market Cap\": info.get(\"marketCap\", \"N/A\"),\n",
-    "            \"P/E Ratio\": info.get(\"trailingPE\", \"N/A\"),\n",
-    "            \"Revenue (TTM)\": info.get(\"totalRevenue\", \"N/A\"),\n",
-    "            \"Revenue Growth (YoY)\": info.get(\"revenueGrowth\", \"N/A\"),\n",
-    "            \"EPS (TTM)\": info.get(\"trailingEps\", \"N/A\")\n",
-    "        })\n",
-    "\n",
-    "        # AI Synopsis\n",
-    "        st.subheader(\"🧠 AI-Generated Investment Thesis\")\n",
-    "\n",
-    "        summary_prompt = f\"\"\"\n",
-    "        Act as a financial analyst. Based on the following data for {ticker}, write a short investment synopsis (around 100 words):\n",
-    "        - Current Price: {info.get(\"currentPrice\", \"N/A\")}\n",
-    "        - Market Cap: {info.get(\"marketCap\", \"N/A\")}\n",
-    "        - P/E Ratio: {info.get(\"trailingPE\", \"N/A\")}\n",
-    "        - Revenue: {info.get(\"totalRevenue\", \"N/A\")}\n",
-    "        - Revenue Growth: {info.get(\"revenueGrowth\", \"N/A\")}\n",
-    "        - EPS: {info.get(\"trailingEps\", \"N/A\")}\n",
-    "        \"\"\"\n",
-    "\n",
-    "        if st.button(\"Generate Synopsis\"):\n",
-    "            try:\n",
-    "                response = openai.ChatCompletion.create(\n",
-    "                    model=\"gpt-4\",\n",
-    "                    messages=[\n",
-    "                        {\"role\": \"system\", \"content\": \"You are a financial analyst.\"},\n",
-    "                        {\"role\": \"user\", \"content\": summary_prompt}\n",
-    "                    ]\n",
-    "                )\n",
-    "                synopsis = response[\"choices\"][0][\"message\"][\"content\"]\n",
-    "                st.success(synopsis)\n",
-    "            except Exception as e:\n",
-    "                st.error(f\"Error generating synopsis: {e}\")\n",
-    "\n",
-    "except Exception as e:\n",
-    "    st.error(f\"Failed to fetch stock data: {e}\")"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "d99a9992-d765-4771-b456-5d6239cd959c",
-   "metadata": {},
-   "outputs": [],
-   "source": []
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "Python [conda env:base] *",
-   "language": "python",
-   "name": "conda-base-py"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.11.5"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
-}
+import streamlit as st
+import yfinance as yf
+import openai
+import datetime
+import os
+
+# Securely read OpenAI API key
+import os
+openai.api_key = os.getenv("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")
+
+
+st.title("📊 AI-Powered Stock Dashboard")
+
+ticker = st.text_input("Enter a stock ticker (e.g., AAPL):", "AAPL")
+start_date = st.date_input("Start Date", datetime.date(2023, 1, 1))
+end_date = st.date_input("End Date", datetime.date.today())
+
+try:
+    stock = yf.Ticker(ticker)
+    hist = stock.history(start=start_date, end=end_date)
+
+    if hist.empty:
+        st.warning("⚠️ No historical data found. Try a different ticker or date range.")
+    else:
+        st.subheader("📈 Stock Price Chart")
+        st.line_chart(hist["Close"])
+
+        fast_info = stock.fast_info
+        st.subheader("📌 Key Financial Metrics")
+        st.write({
+            "Current Price": fast_info.get("lastPrice", "N/A"),
+            "52-Week High": fast_info.get("yearHigh", "N/A"),
+            "52-Week Low": fast_info.get("yearLow", "N/A"),
+            "Market Cap": fast_info.get("marketCap", "N/A")
+        })
+
+        st.subheader("🧠 AI-Generated Investment Thesis")
+        summary_prompt = f"""
+        You are a financial analyst. Based on the following data for {ticker}, write a concise 100-word investment thesis:
+
+        - Current Price: {fast_info.get("lastPrice", "N/A")}
+        - 52-Week High: {fast_info.get("yearHigh", "N/A")}
+        - 52-Week Low: {fast_info.get("yearLow", "N/A")}
+        - Market Cap: {fast_info.get("marketCap", "N/A")}
+        """
+
+        if st.button("Generate Synopsis"):
+            try:
+                response = openai.ChatCompletion.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "system", "content": "You are a financial analyst."},
+                        {"role": "user", "content": summary_prompt}
+                    ]
+                )
+                synopsis = response.choices[0].message.content
+                st.success(synopsis)
+            except Exception as e:
+                st.error(f"❌ Error generating synopsis: {e}")
+
+except Exception as e:
+    st.error(f"❌ Failed to fetch stock data: {e}")
