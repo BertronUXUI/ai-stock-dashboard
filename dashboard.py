@@ -4,7 +4,7 @@ import datetime
 from openai import OpenAI
 
 # Set up OpenAI client securely
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+client = OpenAI(api_key=st.secrets["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"])
 
 st.title("📊 AI-Powered Stock Dashboard")
 
