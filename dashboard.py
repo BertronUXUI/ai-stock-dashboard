@@ -3,8 +3,7 @@ import yfinance as yf
 import pandas as pd
 
 st.set_page_config(page_title="AI Stock Dashboard Demo", layout="wide")
-
-st.title("AI Stock Dashboard Demo")
+st.title("📊 AI Stock Dashboard Demo")
 
 # Input ticker symbol
 ticker = st.text_input("Enter stock ticker symbol", value="AAPL").upper()
@@ -13,36 +12,56 @@ if ticker:
     try:
         stock = yf.Ticker(ticker)
         hist = stock.history(period="1mo")
+        info = stock.get_info()  # Updated to avoid deprecated .info
 
         # Basic stock info
-        info = stock.info
         st.subheader(f"{info.get('shortName', ticker)} ({ticker})")
         st.write(f"Sector: {info.get('sector', 'N/A')}")
         st.write(f"Industry: {info.get('industry', 'N/A')}")
 
         # Show stock price chart
-        st.line_chart(hist['Close'])
+        st.write("### 📈 1-Month Closing Price")
+        st.line_chart(hist["Close"])
 
-        # Financial highlights
-        st.write("### Key Financials")
-        revenue_growth = info.get('revenueGrowth')
-        if revenue_growth:
-            st.write(f"Revenue Growth (TTM): {revenue_growth*100:.2f}%")
-        else:
-            st.write("Revenue Growth data not available.")
+        # Expanded Key Financial Metrics
+        st.write("### 📌 Key Financial Metrics")
 
-        # Dummy synopsis (static text)
-        st.write("### Investment Synopsis")
+        metrics = {
+            "Market Cap": info.get("marketCap"),
+            "Trailing P/E": info.get("trailingPE"),
+            "Forward P/E": info.get("forwardPE"),
+            "PEG Ratio": info.get("pegRatio"),
+            "Price to Book": info.get("priceToBook"),
+            "Profit Margin": info.get("profitMargins"),
+            "Return on Equity": info.get("returnOnEquity"),
+            "Operating Margin": info.get("operatingMargins"),
+            "Debt to Equity": info.get("debtToEquity"),
+            "Total Revenue": info.get("totalRevenue"),
+            "EBITDA": info.get("ebitda"),
+            "Beta": info.get("beta")
+        }
+
+        for key, value in metrics.items():
+            if value is not None:
+                if isinstance(value, float):
+                    st.write(f"{key}: {value:.2f}")
+                else:
+                    st.write(f"{key}: {value}")
+            else:
+                st.write(f"{key}: N/A")
+
+        # Static/dummy AI-generated synopsis
+        st.write("### 🧠 Investment Synopsis")
         st.info(
-            "This stock has demonstrated steady revenue growth and strong market position. "
-            "It shows potential for long-term appreciation based on fundamentals."
+            f"{ticker} shows promising financial health with key indicators like steady earnings and low debt-to-equity. "
+            "Its market fundamentals suggest a potential long-term growth opportunity, especially in current market conditions."
         )
 
-        # Refresh button (reloads the app)
-        if st.button("Refresh Data"):
+        # Refresh button to reload data
+        if st.button("🔄 Refresh Data"):
             st.experimental_rerun()
 
     except Exception as e:
-        st.error(f"Error fetching data for {ticker}: {e}")
+        st.error(f"❌ Error fetching data for {ticker}: {e}")
 else:
     st.info("Please enter a ticker symbol to view stock information.")
