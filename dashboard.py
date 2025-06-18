@@ -1,27 +1,24 @@
 import streamlit as st
 import yfinance as yf
 import datetime
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
-# Load your Gemini API key from Streamlit secrets
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+# Initialize Gemini client (Developer API)
+client = genai.Client(
+    api_key=st.secrets["GEMINI_API_KEY"],
+    http_options=types.HttpOptions(api_version="v1alpha"),
+)
 
-st.set_page_config(page_title="AI Stock Dashboard", layout="centered")
-st.title("📊 Stock Summary")
-
-ticker = st.text_input("Enter a stock ticker symbol (e.g. AAPL, TSLA, MSFT):", "AAPL")
-start_date = st.date_input("Start Date", datetime.date(2023, 1, 1))
-end_date = st.date_input("End Date", datetime.date.today())
-
-# Generate synopsis using Gemini
 def generate_synopsis(prompt):
     try:
-        model = genai.GenerativeModel("gemini-pro")
-        response = model.generate_content(prompt)
+        response = client.generate_content(
+            model="gemini-1.5-flash",  # Replace with a model listed via list_models()
+            contents=[genai.Text(prompt)]
+        )
         return response.text
     except Exception as e:
         return f"❌ Error generating synopsis: {e}"
-
 if ticker:
     try:
         stock = yf.Ticker(ticker)
