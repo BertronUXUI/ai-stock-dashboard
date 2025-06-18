@@ -4,21 +4,24 @@ import datetime
 from google import genai
 from google.genai import types
 
-# Initialize Gemini client (Developer API)
+# Load Gemini API key
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+
 client = genai.Client(
     api_key=st.secrets["GEMINI_API_KEY"],
-    http_options=types.HttpOptions(api_version="v1alpha"),
+    http_options=types.HttpOptions(api_version="v1")
 )
 
-def generate_synopsis(prompt):
-    try:
-        response = client.generate_content(
-            model="gemini-1.5-flash",  # Replace with a model listed via list_models()
-            contents=[genai.Text(prompt)]
-        )
-        return response.text
-    except Exception as e:
-        return f"❌ Error generating synopsis: {e}"
+# Streamlit UI
+st.set_page_config(page_title="AI Stock Dashboard", layout="centered")
+st.title("📊 AI-Powered Stock Dashboard")
+
+# ✅ You must define ticker before using it!
+ticker = st.text_input("Enter a stock ticker symbol (e.g. AAPL, TSLA, MSFT):", "AAPL")
+start_date = st.date_input("Start Date", datetime.date(2023, 1, 1))
+end_date = st.date_input("End Date", datetime.date.today())
+
+    # continue with stock fetching and analysis
 if ticker:
     try:
         stock = yf.Ticker(ticker)
