@@ -48,16 +48,16 @@ try:
             try:
                 from openai import OpenAI
 
-client = OpenAI()
-
-response = client.chat.completions.create(
-    model="gpt-4",
-    messages=[
-        {"role": "system", "content": "You are a financial analyst."},
-        {"role": "user", "content": summary_prompt}
-    ]
-)
-synopsis = response.choices[0].message.content
+                client = OpenAI()
+                
+                response = client.chat.completions.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "system", "content": "You are a financial analyst."},
+                        {"role": "user", "content": summary_prompt}
+                    ]
+                )
+                synopsis = response.choices[0].message.content
                 st.success(synopsis)
             except Exception as e:
                 st.error(f"❌ Error generating synopsis: {e}")
