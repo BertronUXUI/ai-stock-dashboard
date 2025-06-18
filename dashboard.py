@@ -16,9 +16,9 @@ end_date = st.date_input("End Date", datetime.date.today())
 # Generate synopsis using Gemini
 def generate_synopsis(prompt):
     try:
-        model = genai.ChatModel.from_pretrained("chat-bison-001")
-        response = model.predict(messages=[{"author": "user", "content": prompt}])
-        return response.content
+        model = genai.GenerativeModel("models/text-bison-001")
+        response = model.generate_content(prompt)
+        return response.text
     except Exception as e:
         return f"❌ Error generating synopsis: {e}"
 
