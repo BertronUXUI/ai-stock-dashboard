@@ -44,7 +44,7 @@ try:
         if st.button("Generate Synopsis"):
             try:
                 response = client.chat.completions.create(
-                    model="gpt-4",
+                    model="gpt-3.5-turbo",  # ✅ use this model instead
                     messages=[
                         {"role": "system", "content": "You are a financial analyst."},
                         {"role": "user", "content": summary_prompt}
