@@ -1,15 +1,13 @@
 import streamlit as st
 import yfinance as yf
-from openai import OpenAI
+import openai
 import datetime
 import os
 
 # Securely read OpenAI API key
-import os
-openai.api_key = os.getenv("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")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-
-st.title("📊 Stock Summary")
+st.title("📊 AI-Powered Stock Dashboard")
 
 ticker = st.text_input("Enter a stock ticker (e.g., AAPL):", "AAPL")
 start_date = st.date_input("Start Date", datetime.date(2023, 1, 1))
@@ -34,7 +32,7 @@ try:
             "Market Cap": fast_info.get("marketCap", "N/A")
         })
 
-        st.subheader("🧠 Company Background and investment thesis")
+        st.subheader("🧠 AI-Generated Investment Thesis")
         summary_prompt = f"""
         You are a financial analyst. Based on the following data for {ticker}, write a concise 100-word investment thesis:
 
@@ -46,11 +44,7 @@ try:
 
         if st.button("Generate Synopsis"):
             try:
-                from openai import OpenAI
-
-                client = OpenAI()
-                
-                response = client.chat.completions.create(
+                response = openai.ChatCompletion.create(
                     model="gpt-4",
                     messages=[
                         {"role": "system", "content": "You are a financial analyst."},
