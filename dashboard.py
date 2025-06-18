@@ -1,7 +1,6 @@
 import streamlit as st
 import yfinance as yf
 import pandas as pd
-import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="AI Stock Dashboard Demo", layout="wide")
 
