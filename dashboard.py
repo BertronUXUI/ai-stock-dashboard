@@ -1,11 +1,10 @@
 import streamlit as st
 import yfinance as yf
-import openai
 import datetime
-import os
+from openai import OpenAI
 
-# Securely read OpenAI API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Set up OpenAI client securely
+client = OpenAI(api_key=st.secrets["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"])
 
 st.title("📊 AI-Powered Stock Dashboard")
 
@@ -18,7 +17,7 @@ try:
     hist = stock.history(start=start_date, end=end_date)
 
     if hist.empty:
-        st.warning("⚠️ No historical data found. Try a different ticker or date range.")
+        st.warning("⚠️ No historical data found.")
     else:
         st.subheader("📈 Stock Price Chart")
         st.line_chart(hist["Close"])
@@ -44,7 +43,7 @@ try:
 
         if st.button("Generate Synopsis"):
             try:
-                response = openai.ChatCompletion.create(
+                response = client.chat.completions.create(
                     model="gpt-4",
                     messages=[
                         {"role": "system", "content": "You are a financial analyst."},
