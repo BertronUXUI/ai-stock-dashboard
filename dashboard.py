@@ -16,7 +16,7 @@ end_date = st.date_input("End Date", datetime.date.today())
 # Generate synopsis using Gemini
 def generate_synopsis(prompt):
     try:
-        model = genai.GenerativeModel("models/text-bison-001")
+        model = genai.GenerativeModel("gemini-pro")
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
