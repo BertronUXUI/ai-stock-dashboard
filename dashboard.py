@@ -5,7 +5,10 @@ from google import genai
 from google.genai import types
 
 # --- Gemini Setup ---
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+client = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    api_key=st.secrets["GEMINI_API_KEY"]
+)
 client = genai.Client(
     api_key=st.secrets["GEMINI_API_KEY"],
     http_options=types.HttpOptions(api_version="v1"),
@@ -22,10 +25,7 @@ end_date = st.date_input("End Date", datetime.date.today())
 # --- Gemini Synopsis Generator ---
 def generate_synopsis(prompt):
     try:
-        response = client.generate_content(
-            model="models/gemini-1.5-flash",
-            contents=[genai.Text(prompt)]
-        )
+        response = client.generate_content(prompt)
         return response.text
     except Exception as e:
         return f"❌ Error generating synopsis: {e}"
