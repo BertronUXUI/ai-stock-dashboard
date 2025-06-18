@@ -9,7 +9,7 @@ import os
 openai.api_key = os.getenv("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")
 
 
-st.title("📊 test")
+st.title("📊 Stock Summary")
 
 ticker = st.text_input("Enter a stock ticker (e.g., AAPL):", "AAPL")
 start_date = st.date_input("Start Date", datetime.date(2023, 1, 1))
@@ -34,7 +34,7 @@ try:
             "Market Cap": fast_info.get("marketCap", "N/A")
         })
 
-        st.subheader("🧠 AI-Generated Investment Thesis")
+        st.subheader("🧠 Company Background and investment thesis")
         summary_prompt = f"""
         You are a financial analyst. Based on the following data for {ticker}, write a concise 100-word investment thesis:
 
