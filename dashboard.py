@@ -9,7 +9,7 @@ import os
 openai.api_key = os.getenv("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")
 
 
-st.title("📊 AI-Powered Stock Dashboard")
+st.title("📊 test")
 
 ticker = st.text_input("Enter a stock ticker (e.g., AAPL):", "AAPL")
 start_date = st.date_input("Start Date", datetime.date(2023, 1, 1))
