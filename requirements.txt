@@ -1,3 +1,4 @@
 streamlit
 yfinance
 openai>=1.0.0
+google-generativeai
